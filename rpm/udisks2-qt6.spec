@@ -1,5 +1,5 @@
 Name:           udisks2-qt6
-Version:        5.0.0
+Version:        6.0.0
 Release:        3%{?dist}
 Summary:        Qt6 binding for udisks2
 License:        GPLv3+
