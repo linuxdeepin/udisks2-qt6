@@ -1,9 +1,11 @@
-# udisks2-qt5
-UDisks2 DBus interfaces binding of Qt5. 
+# udisks2-qt6
+
+UDisks2 DBus interfaces binding for Qt6.
 
 ### Build dependencies
 
-- qtbase5-dev
+- cmake
+- qt6-base-dev
 - pkg-config
 
 ## Installation
@@ -14,7 +16,7 @@ UDisks2 DBus interfaces binding of Qt5.
 $ cd /path/to/your/source/code
 $ mkdir build
 $ cd build
-$ qmake ../
+$ cmake ..
 $ make
 $ sudo make install
 ```
@@ -33,4 +35,4 @@ We encourage you to report issues and contribute changes
 
 ## License
 
-udisks2-qt5 is licensed under [GPL-3.0-or-later](LICENSE.txt)
+udisks2-qt6 is licensed under [GPL-3.0-or-later](LICENSE.txt)

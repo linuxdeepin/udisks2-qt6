@@ -1,26 +1,29 @@
 # Maintainer: Dingyuan Zhang <lxz@mkacg.com>
 
-pkgname=udisks2-qt5-git
-pkgver=5.0.6
+pkgname=udisks2-qt6-git
+pkgver=0.0.1
 pkgrel=1
-pkgdesc='UDisks2 DBus interfaces binding for Qt5'
+pkgdesc='UDisks2 DBus interfaces binding for Qt6'
 arch=('x86_64')
-url="https://github.com/linuxdeepin/udisks2-qt5"
+url="https://github.com/linuxdeepin/udisks2-qt6"
 license=('GPL3')
-depends=('qt5-base' 'udisks2')
-conflicts=('udisks2-qt5')
-provides=('udisks2-qt5')
+depends=('qt6-base' 'udisks2')
+makedepends=('cmake' 'ninja')
+conflicts=('udisks2-qt6')
+provides=('udisks2-qt6')
 group=('deepin-git')
 source=('source.tar.gz')
 sha512sums=('SKIP')
 
 build() {
   cd $deepin_source_name
-  qmake-qt5 PREFIX=/usr
-  make
+  cmake -GNinja -B build \
+        -DCMAKE_INSTALL_PREFIX=/usr \
+        -DCMAKE_BUILD_TYPE=Release
+  cmake --build build
 }
 
 package() {
   cd $deepin_source_name
-  make INSTALL_ROOT="$pkgdir" install
+  DESTDIR="$pkgdir" cmake --install build
 }
