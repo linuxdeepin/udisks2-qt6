@@ -1,3 +1,10 @@
+udisks2-qt6 (6.0.0) unstable; urgency=medium
+
+  * Initial release for Qt6 version.
+  * Port from udisks2-qt5 to udisks2-qt6.
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Tue, 31 Dec 2024 11:26:00 +0800
+
 udisks2-qt6 (0.0.1) unstable; urgency=medium
 
   * Initial release.

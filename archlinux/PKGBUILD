@@ -1,7 +1,7 @@
 # Maintainer: Dingyuan Zhang <lxz@mkacg.com>
 
 pkgname=udisks2-qt6-git
-pkgver=0.0.1
+pkgver=6.0.0
 pkgrel=1
 pkgdesc='UDisks2 DBus interfaces binding for Qt6'
 arch=('x86_64')

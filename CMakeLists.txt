@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.13)
 
-project(udisks2-qt6 VERSION 0.0.1 LANGUAGES CXX)
+project(udisks2-qt6 VERSION 6.0.0 LANGUAGES CXX)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
