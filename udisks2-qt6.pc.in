@@ -1,0 +1,11 @@
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=${prefix}
+libdir=${prefix}/@CMAKE_INSTALL_LIBDIR@
+includedir=${prefix}/@CMAKE_INSTALL_INCLUDEDIR@/@PROJECT_NAME@
+
+Name: @PROJECT_NAME@
+Description: UDisks2 Library with Qt6
+Version: @PROJECT_VERSION@
+Requires: Qt6Core Qt6DBus
+Libs: -L${libdir} -l@PROJECT_NAME@
+Cflags: -I${includedir} 

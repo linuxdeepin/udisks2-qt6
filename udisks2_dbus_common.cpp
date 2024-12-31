@@ -46,8 +46,6 @@ OrgFreedesktopDBusObjectManagerInterface *objectManager()
         qDBusRegisterMetaType<QByteArrayList>();
         qDBusRegisterMetaType<QPair<QString,QVariantMap>>();
         qDBusRegisterMetaType<QMap<QDBusObjectPath,QMap<QString,QVariantMap>>>();
-
-        QMetaType::registerDebugStreamOperator<QList<QPair<QString, QVariantMap>>>();
     }
 
     return omGlobal;
