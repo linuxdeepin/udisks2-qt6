@@ -1,20 +1,20 @@
-Source: udisks2-qt5
+Source: udisks2-qt6
 Section: admin
 Priority: optional
 Maintainer: Deepin Package Builder <packages@deepin.com>
-Build-Depends: debhelper (>= 9), qtbase5-dev, pkg-config
+Build-Depends: debhelper (>= 9), cmake,qt6-base-dev, pkg-config
 Standards-Version: 3.9.8
-Homepage: http://github.com/linuxdeepin/udisks2-qt5
+Homepage: http://github.com/linuxdeepin/udisks2-qt6
 
-Package: libudisks2-qt5
+Package: libudisks2-qt6
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: UDisks2 library with Qt5
- UDisks2 DBus interfaces binding of Qt5.
+Description: UDisks2 library with Qt6
+ UDisks2 DBus interfaces binding of Qt6.
 
-Package: libudisks2-qt5-dev
+Package: libudisks2-qt6-dev
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends},
- libudisks2-qt5( =${binary:Version})
-Description: libudisks2-qt5 developer package
- UDisks2 DBus interfaces binding of Qt5.
+ libudisks2-qt6( =${binary:Version})
+Description: libudisks2-qt6 developer package
+ UDisks2 DBus interfaces binding of Qt6.
