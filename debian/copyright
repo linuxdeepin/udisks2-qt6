@@ -1,9 +1,9 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
-Upstream-Name: udisks2-qt5
-Source: http://github.com/linuxdeepin/udisks2-qt5
+Upstream-Name: udisks2-qt6
+Source: https://github.com/linuxdeepin/udisks2-qt6
 
 Files: *
-Copyright: 2018 Deepin.Inc
+Copyright: 2018-2024 Deepin.Inc
 License: GPL-3+
  This package is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by

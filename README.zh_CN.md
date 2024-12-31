@@ -1,10 +1,11 @@
-# udisks2-qt5
+# udisks2-qt6
 
-使用 Qt5 封装的 UDisks2 的 DBus 接口。
+使用 Qt6 封装的 UDisks2 的 DBus 接口。
 
 ### 编译依赖
 
-- qtbase5-dev
+- cmake
+- qt6-base-dev
 - pkg-config
 
 ## 安装
@@ -15,7 +16,7 @@
 $ cd /path/to/your/source/code
 $ mkdir build
 $ cd build
-$ qmake ../
+$ cmake ..
 $ make
 $ sudo make install
 ```
@@ -34,4 +35,4 @@ $ sudo make install
 
 ## 开源许可证
 
-udisks2-qt5 在 [GPL-3.0-or-later](LICENSE.txt)下发布。
+udisks2-qt6 在 [GPL-3.0-or-later](LICENSE.txt)下发布。

@@ -19,7 +19,7 @@ Copyright: None
 License: CC0-1.0
 
 # Project file
-Files: *.pro *.pri
+Files: *CMakeLists.txt udisks2-qt6.pc.in udisks2-qt6Config.cmake.in
 Copyright: None
 License: CC0-1.0
 
