@@ -22,6 +22,7 @@ const QString ManagerPath = "/org/freedesktop/UDisks2/Manager";
 
 static int udisks2VersionCompare(const QString &version)
 {
+    qDebug() << "Comparing UDisks2 version:" << version;
     const QStringList &version_list = UDisks2::version().split(".");
     const QStringList &v_v_list = version.split(".");
 
@@ -49,7 +50,7 @@ static int udisks2VersionCompare(const QString &version)
 static bool fixUDisks2DiskAddSignal()
 {
     static bool fix = udisks2VersionCompare("2.1.7.1") > 0;
-
+    qDebug() << "UDisks2 disk add signal fix status:" << fix;
     return fix;
 }
 
@@ -70,11 +71,12 @@ public:
 DDiskManagerPrivate::DDiskManagerPrivate(DDiskManager *qq)
     : q_ptr(qq)
 {
-
+    qDebug() << "Creating DDiskManagerPrivate";
 }
 
 void DDiskManagerPrivate::updateBlockDeviceMountPointsMap()
 {
+    qDebug() << "Updating block device mount points map";
     blockDeviceMountPointsMap.clear();
 
     auto om = UDisks2::objectManager();
@@ -109,6 +111,7 @@ void DDiskManager::onInterfacesAdded(const QDBusObjectPath &object_path, const Q
     const QString &path_job = QStringLiteral("/org/freedesktop/UDisks2/jobs/");
 
     Q_D(DDiskManager);
+    qDebug() << "Interfaces added for path:" << path;
 
     if (path.startsWith(path_drive)) {
         if (interfaces_and_properties.contains(QStringLiteral(UDISKS2_SERVICE ".Drive"))) {
@@ -120,9 +123,11 @@ void DDiskManager::onInterfacesAdded(const QDBusObjectPath &object_path, const Q
                         d->diskDeviceAddSignalFlag.remove(path);
                     });
 
+                    qDebug() << "Disk device added:" << path;
                     Q_EMIT diskDeviceAdded(path);
                 }
             } else {
+                qDebug() << "Disk device added:" << path;
                 Q_EMIT diskDeviceAdded(path);
             }
         }
@@ -139,10 +144,12 @@ void DDiskManager::onInterfacesAdded(const QDBusObjectPath &object_path, const Q
                         d->diskDeviceAddSignalFlag.remove(drive);
                     });
 
+                    qDebug() << "Disk device added:" << drive;
                     Q_EMIT diskDeviceAdded(drive);
                 }
             }
 
+            qDebug() << "Block device added:" << path;
             Q_EMIT blockDeviceAdded(path);
         }
 
@@ -150,11 +157,13 @@ void DDiskManager::onInterfacesAdded(const QDBusObjectPath &object_path, const Q
             Q_D(DDiskManager);
 
             d->blockDeviceMountPointsMap.remove(object_path.path());
+            qDebug() << "Filesystem added for block device:" << path;
 
             Q_EMIT fileSystemAdded(path);
         }
     } else if (path.startsWith(path_job)) {
         if (interfaces_and_properties.contains(QStringLiteral(UDISKS2_SERVICE ".Job"))) {
+            qDebug() << "Job added:" << path;
             Q_EMIT jobAdded(path);
         }
     }
@@ -163,19 +172,21 @@ void DDiskManager::onInterfacesAdded(const QDBusObjectPath &object_path, const Q
 void DDiskManager::onInterfacesRemoved(const QDBusObjectPath &object_path, const QStringList &interfaces)
 {
     const QString &path = object_path.path();
+    qDebug() << "Interfaces removed for path:" << path;
 
     Q_D(DDiskManager);
 
     for (const QString &i : interfaces) {
         if (i == QStringLiteral(UDISKS2_SERVICE ".Drive")) {
             d->diskDeviceAddSignalFlag.remove(path);
-
+            qDebug() << "Disk device removed:" << path;
             Q_EMIT diskDeviceRemoved(path);
         } else if (i == QStringLiteral(UDISKS2_SERVICE ".Filesystem")) {
             d->blockDeviceMountPointsMap.remove(object_path.path());
-
+            qDebug() << "Filesystem removed for block device:" << path;
             Q_EMIT fileSystemRemoved(path);
         } else if (i == QStringLiteral(UDISKS2_SERVICE ".Block")) {
+            qDebug() << "Block device removed:" << path;
             Q_EMIT blockDeviceRemoved(path);
         }
     }
@@ -184,10 +195,12 @@ void DDiskManager::onInterfacesRemoved(const QDBusObjectPath &object_path, const
 void DDiskManager::onPropertiesChanged(const QString &interface, const QVariantMap &changed_properties, const QDBusMessage &message)
 {
     Q_D(DDiskManager);
+    qDebug() << "Properties changed for interface:" << interface << "path:" << message.path();
 
     const QString &path = message.path();
 
     if (changed_properties.contains("Optical")) {
+        qDebug() << "Optical property changed for device:" << path;
         Q_EMIT opticalChanged(path);
     }
 
@@ -203,14 +216,17 @@ void DDiskManager::onPropertiesChanged(const QString &interface, const QVariantM
     const QByteArrayList &new_mount_points = qdbus_cast<QByteArrayList>(changed_properties.value("MountPoints"));
 
     d->blockDeviceMountPointsMap[path] = new_mount_points;
+    qDebug() << "Mount points changed for block device:" << path << "old:" << old_mount_points << "new:" << new_mount_points;
 
     Q_EMIT mountPointsChanged(path, old_mount_points, new_mount_points);
 
     if (old_mount_points.isEmpty()) {
         if (!new_mount_points.isEmpty()) {
+            qDebug() << "Mount added for block device:" << path << "mount point:" << new_mount_points.first();
             Q_EMIT mountAdded(path, new_mount_points.first());
         }
     } else if (new_mount_points.isEmpty()) {
+        qDebug() << "Mount removed for block device:" << path << "mount point:" << old_mount_points.first();
         Q_EMIT mountRemoved(path, old_mount_points.first());
     }
 }
@@ -228,16 +244,17 @@ DDiskManager::DDiskManager(QObject *parent)
     : QObject(parent)
     , d_ptr(new DDiskManagerPrivate(this))
 {
-
+    qDebug() << "Creating DDiskManager";
 }
 
 DDiskManager::~DDiskManager()
 {
-
+    qDebug() << "DDiskManager destroyed";
 }
 
 static QStringList getDBusNodeNameList(const QString &service, const QString &path, const QDBusConnection &connection)
 {
+    qDebug() << "Getting DBus node name list for service:" << service << "path:" << path;
     QDBusInterface ud2(service, path, "org.freedesktop.DBus.Introspectable", connection);
     QDBusReply<QString> reply = ud2.call("Introspect");
     QXmlStreamReader xml_parser(reply.value());

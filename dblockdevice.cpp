@@ -6,16 +6,18 @@
 #include "private/dblockdevice_p.h"
 #include "udisks2_interface.h"
 #include "objectmanager_interface.h"
+#include <QDebug>
 
 DBlockDevicePrivate::DBlockDevicePrivate(DBlockDevice *qq)
     : q_ptr(qq)
 {
-
+    qDebug() << "Creating DBlockDevicePrivate";
 }
 
 void DBlockDevice::onInterfacesAdded(const QDBusObjectPath &object_path, const QMap<QString, QVariantMap> &interfaces_and_properties)
 {
     Q_D(DBlockDevice);
+    qDebug() << "Interfaces added for block device:" << object_path.path();
 
     const QString &path = object_path.path();
 
@@ -23,14 +25,17 @@ void DBlockDevice::onInterfacesAdded(const QDBusObjectPath &object_path, const Q
         return;
 
     if (interfaces_and_properties.contains(QStringLiteral(UDISKS2_SERVICE ".Filesystem"))) {
+        qDebug() << "Filesystem interface added for block device:" << path;
         Q_EMIT hasFileSystemChanged(true);
     }
 
     if (interfaces_and_properties.contains(QStringLiteral(UDISKS2_SERVICE ".Partition"))) {
+        qDebug() << "Partition interface added for block device:" << path;
         Q_EMIT hasPartitionChanged(true);
     }
 
     if (interfaces_and_properties.contains(QStringLiteral(UDISKS2_SERVICE ".Encrypted"))) {
+        qDebug() << "Encrypted interface added for block device:" << path;
         Q_EMIT isEncryptedChanged(true);
     }
 }
@@ -38,6 +43,7 @@ void DBlockDevice::onInterfacesAdded(const QDBusObjectPath &object_path, const Q
 void DBlockDevice::onInterfacesRemoved(const QDBusObjectPath &object_path, const QStringList &interfaces)
 {
     Q_D(DBlockDevice);
+    qDebug() << "Interfaces removed for block device:" << object_path.path();
 
     const QString &path = object_path.path();
 
@@ -46,10 +52,13 @@ void DBlockDevice::onInterfacesRemoved(const QDBusObjectPath &object_path, const
 
     for (const QString &i : interfaces) {
         if (i == QStringLiteral(UDISKS2_SERVICE ".Filesystem")) {
+            qDebug() << "Filesystem interface removed for block device:" << path;
             Q_EMIT hasFileSystemChanged(false);
         } else if (i == QStringLiteral(UDISKS2_SERVICE ".Partition")) {
+            qDebug() << "Partition interface removed for block device:" << path;
             Q_EMIT hasPartitionChanged(false);
         } else if (i == QStringLiteral(UDISKS2_SERVICE ".Encrypted")) {
+            qDebug() << "Encrypted interface removed for block device:" << path;
             Q_EMIT isEncryptedChanged(false);
         }
     }
@@ -57,11 +66,14 @@ void DBlockDevice::onInterfacesRemoved(const QDBusObjectPath &object_path, const
 
 void DBlockDevice::onPropertiesChanged(const QString &interface, const QVariantMap &changed_properties)
 {
+    qDebug() << "Properties changed for block device:" << d_ptr->dbus->path() << "interface:" << interface;
+
     if (interface.endsWith(".PartitionTable")) {
         auto begin = changed_properties.begin();
 
         while (begin != changed_properties.constEnd()) {
             if (begin.key() == "Type") {
+                qDebug() << "Partition table type changed for block device:" << d_ptr->dbus->path();
                 Q_EMIT ptTypeChanged();
                 break;
             }
@@ -97,20 +109,20 @@ void DBlockDevice::onPropertiesChanged(const QString &interface, const QVariantM
 
 DBlockDevice::~DBlockDevice()
 {
-
+    qDebug() << "DBlockDevice destroyed:" << path();
 }
 
 bool DBlockDevice::isValid() const
 {
     Q_D(const DBlockDevice);
-
+    qDebug() << "Checking if block device is valid:" << d->dbus->path();
     return d->dbus->isValid();
 }
 
 bool DBlockDevice::watchChanges() const
 {
     Q_D(const DBlockDevice);
-
+    qDebug() << "Getting block device watch changes status:" << d->dbus->path();
     return d->watchChanges;
 }
 
@@ -122,21 +134,21 @@ bool DBlockDevice::watchChanges() const
 QString DBlockDevice::path() const
 {
     Q_D(const DBlockDevice);
-
+    qDebug() << "Getting block device path:" << d->dbus->path();
     return d->dbus->path();
 }
 
 QList<QPair<QString, QVariantMap> > DBlockDevice::configuration() const
 {
     Q_D(const DBlockDevice);
-
+    qDebug() << "Getting block device configuration:" << d->dbus->path();
     return d->dbus->configuration();
 }
 
 QString DBlockDevice::cryptoBackingDevice() const
 {
     Q_D(const DBlockDevice);
-
+    qDebug() << "Getting block device crypto backing device:" << d->dbus->path();
     return d->dbus->cryptoBackingDevice().path();
 }
 
@@ -148,14 +160,14 @@ QString DBlockDevice::cryptoBackingDevice() const
 QByteArray DBlockDevice::device() const
 {
     Q_D(const DBlockDevice);
-
+    qDebug() << "Getting block device device path:" << d->dbus->path();
     return d->dbus->device();
 }
 
 qulonglong DBlockDevice::deviceNumber() const
 {
     Q_D(const DBlockDevice);
-
+    qDebug() << "Getting block device number:" << d->dbus->path();
     return d->dbus->deviceNumber();
 }
 
@@ -167,86 +179,89 @@ qulonglong DBlockDevice::deviceNumber() const
 QString DBlockDevice::drive() const
 {
     Q_D(const DBlockDevice);
-
+    qDebug() << "Getting block device drive path:" << d->dbus->path();
     return d->dbus->drive().path();
 }
 
 bool DBlockDevice::hintAuto() const
 {
     Q_D(const DBlockDevice);
-
+    qDebug() << "Getting block device hint auto:" << d->dbus->path();
     return d->dbus->hintAuto();
 }
 
 QString DBlockDevice::hintIconName() const
 {
     Q_D(const DBlockDevice);
-
+    qDebug() << "Getting block device hint icon name:" << d->dbus->path();
     return d->dbus->hintIconName();
 }
 
 bool DBlockDevice::hintIgnore() const
 {
     Q_D(const DBlockDevice);
-
+    qDebug() << "Getting block device hint ignore:" << d->dbus->path();
     return d->dbus->hintIgnore();
 }
 
 QString DBlockDevice::hintName() const
 {
     Q_D(const DBlockDevice);
-
+    qDebug() << "Getting block device hint name:" << d->dbus->path();
     return d->dbus->hintName();
 }
 
 bool DBlockDevice::hintPartitionable() const
 {
     Q_D(const DBlockDevice);
-
+    qDebug() << "Getting block device hint partitionable:" << d->dbus->path();
     return d->dbus->hintPartitionable();
 }
 
 QString DBlockDevice::hintSymbolicIconName() const
 {
     Q_D(const DBlockDevice);
-
+    qDebug() << "Getting block device hint symbolic icon name:" << d->dbus->path();
     return d->dbus->hintSymbolicIconName();
 }
 
 bool DBlockDevice::hintSystem() const
 {
     Q_D(const DBlockDevice);
-
+    qDebug() << "Getting block device hint system:" << d->dbus->path();
     return d->dbus->hintSystem();
 }
 
 QString DBlockDevice::id() const
 {
     Q_D(const DBlockDevice);
-
+    qDebug() << "Getting block device ID:" << d->dbus->path();
     return d->dbus->id();
 }
 
 QString DBlockDevice::idLabel() const
 {
     Q_D(const DBlockDevice);
-
+    qDebug() << "Getting block device ID label:" << d->dbus->path();
     return d->dbus->idLabel();
 }
 
 QString DBlockDevice::idType() const
 {
     Q_D(const DBlockDevice);
-
+    qDebug() << "Getting block device ID type:" << d->dbus->path();
     return d->dbus->idType();
 }
 
 DBlockDevice::FSType DBlockDevice::fsType() const
 {
     const QString &fs_type = idType();
+    qDebug() << "Getting block device filesystem type:" << path() << "type:" << fs_type;
 
-    if (fs_type.isEmpty())
+    if (fs_type.isEmpty()) {
+        qWarning() << "Filesystem type is empty:" << path();
         return InvalidFS;
+    }
 
     if (fs_type == "hfs+")
         return hfs_plus;
@@ -257,6 +272,7 @@ DBlockDevice::FSType DBlockDevice::fsType() const
     int value = me.keyToValue(fs_type.toLatin1().constData(), &ok);
 
     if (!ok) {
+        qWarning() << "Failed to convert filesystem type:" << path() << "type:" << fs_type;
         return UnknowFS;
     }
 
