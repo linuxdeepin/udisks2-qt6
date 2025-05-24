@@ -5,6 +5,7 @@
 #include "dblockpartition.h"
 #include "private/dblockdevice_p.h"
 #include "udisks2_interface.h"
+#include <QDebug>
 
 class DBlockPartitionPrivate : public DBlockDevicePrivate
 {
@@ -17,75 +18,76 @@ public:
 DBlockPartitionPrivate::DBlockPartitionPrivate(DBlockPartition *qq)
     : DBlockDevicePrivate(qq)
 {
-
+    qDebug() << "Creating DBlockPartitionPrivate";
 }
 
 qulonglong DBlockPartition::flags() const
 {
     Q_D(const DBlockPartition);
-
+    qDebug() << "Getting partition flags:" << d->dbus->path();
     return d->dbus->flags();
 }
 
 bool DBlockPartition::isContained() const
 {
     Q_D(const DBlockPartition);
-
+    qDebug() << "Checking if partition is contained:" << d->dbus->path();
     return d->dbus->isContained();
 }
 
 bool DBlockPartition::isContainer() const
 {
     Q_D(const DBlockPartition);
-
+    qDebug() << "Checking if partition is container:" << d->dbus->path();
     return d->dbus->isContainer();
 }
 
 QString DBlockPartition::name() const
 {
     Q_D(const DBlockPartition);
-
+    qDebug() << "Getting partition name:" << d->dbus->path();
     return d->dbus->name();
 }
 
 uint DBlockPartition::number() const
 {
     Q_D(const DBlockPartition);
-
+    qDebug() << "Getting partition number:" << d->dbus->path();
     return d->dbus->number();
 }
 
 qulonglong DBlockPartition::offset() const
 {
     Q_D(const DBlockPartition);
-
+    qDebug() << "Getting partition offset:" << d->dbus->path();
     return d->dbus->offset();
 }
 
 qulonglong DBlockPartition::size() const
 {
     Q_D(const DBlockPartition);
-
+    qDebug() << "Getting partition size:" << d->dbus->path();
     return d->dbus->size();
 }
 
 QString DBlockPartition::table() const
 {
     Q_D(const DBlockPartition);
-
+    qDebug() << "Getting partition table:" << d->dbus->path();
     return d->dbus->table().path();
 }
 
 QString DBlockPartition::type() const
 {
     Q_D(const DBlockPartition);
-
+    qDebug() << "Getting partition type:" << d->dbus->path();
     return d->dbus->type();
 }
 
 DBlockPartition::Type DBlockPartition::eType() const
 {
     const QString &type = this->type();
+    qDebug() << "Getting partition enum type:" << path() << "type:" << type;
 
     if (type.isEmpty())
         return Empty;
@@ -94,6 +96,7 @@ DBlockPartition::Type DBlockPartition::eType() const
     int value = type.toInt(&ok, 16);
 
     if (!ok) {
+        qWarning() << "Invalid partition type:" << type;
         return Unknow;
     }
 
@@ -103,15 +106,17 @@ DBlockPartition::Type DBlockPartition::eType() const
 QString DBlockPartition::UUID() const
 {
     Q_D(const DBlockPartition);
-
+    qDebug() << "Getting partition UUID:" << d->dbus->path();
     return d->dbus->uUID();
 }
 
 DBlockPartition::GUIDType DBlockPartition::guidType() const
 {
+    qDebug() << "Getting partition GUID type:" << path();
     static QByteArrayList list;
 
     if (list.isEmpty()) {
+        qDebug() << "Initializing GUID type list";
         // None
         list << "00000000-0000-0000-0000-000000000000"
              << "024DEE41-33E7-11D3-9D69-0008C781F39F"
@@ -681,42 +686,64 @@ QString DBlockPartition::guidTypeDescription(GUIDType type)
 void DBlockPartition::deletePartition(const QVariantMap &options)
 {
     Q_D(DBlockPartition);
-
-    d->dbus->Delete(options);
+    qDebug() << "Deleting partition:" << d->dbus->path() << "options:" << options;
+    auto r = d->dbus->Delete(options);
+    r.waitForFinished();
+    if (r.isError()) {
+        qWarning() << "Failed to delete partition:" << d->dbus->path() << "error:" << r.error().message();
+    }
 }
 
 void DBlockPartition::resize(qulonglong size, const QVariantMap &options)
 {
     Q_D(DBlockPartition);
-
-    d->dbus->Resize(size, options);
+    qDebug() << "Resizing partition:" << d->dbus->path() << "new size:" << size << "options:" << options;
+    auto r = d->dbus->Resize(size, options);
+    r.waitForFinished();
+    if (r.isError()) {
+        qWarning() << "Failed to resize partition:" << d->dbus->path() << "error:" << r.error().message();
+    }
 }
 
 void DBlockPartition::setFlags(qulonglong flags, const QVariantMap &options)
 {
     Q_D(DBlockPartition);
-
-    d->dbus->SetFlags(flags, options);
+    qDebug() << "Setting partition flags:" << d->dbus->path() << "flags:" << flags << "options:" << options;
+    auto r = d->dbus->SetFlags(flags, options);
+    r.waitForFinished();
+    if (r.isError()) {
+        qWarning() << "Failed to set partition flags:" << d->dbus->path() << "error:" << r.error().message();
+    }
 }
 
 void DBlockPartition::setName(const QString &name, const QVariantMap &options)
 {
     Q_D(DBlockPartition);
-
-    d->dbus->SetName(name, options);
+    qDebug() << "Setting partition name:" << d->dbus->path() << "new name:" << name << "options:" << options;
+    auto r = d->dbus->SetName(name, options);
+    r.waitForFinished();
+    if (r.isError()) {
+        qWarning() << "Failed to set partition name:" << d->dbus->path() << "error:" << r.error().message();
+    }
 }
 
 void DBlockPartition::setType(const QString &type, const QVariantMap &options)
 {
     Q_D(DBlockPartition);
-
-    d->dbus->SetType(type, options);
+    qDebug() << "Setting partition type:" << d->dbus->path() << "new type:" << type << "options:" << options;
+    auto r = d->dbus->SetType(type, options);
+    r.waitForFinished();
+    if (r.isError()) {
+        qWarning() << "Failed to set partition type:" << d->dbus->path() << "error:" << r.error().message();
+    }
 }
 
 void DBlockPartition::setType(DBlockPartition::Type type, const QVariantMap &options)
 {
-    if (type == Unknow)
+    if (type == Unknow) {
+        qWarning() << "Invalid partition type:" << type;
         return;
+    }
 
     QString type_string = QString::asprintf("0x%.2s", QByteArray::number(type, 16).constData());
 

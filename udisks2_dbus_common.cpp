@@ -11,6 +11,7 @@
 #include <QDBusConnection>
 #include <QDBusReply>
 #include <QXmlStreamReader>
+#include <QDebug>
 
 namespace UDisks2 {
 Q_GLOBAL_STATIC_WITH_ARGS(OrgFreedesktopDBusObjectManagerInterface, omGlobal, (UDISKS2_SERVICE, "/org/freedesktop/UDisks2", QDBusConnection::systemBus()))
@@ -18,6 +19,7 @@ Q_GLOBAL_STATIC_WITH_ARGS(OrgFreedesktopUDisks2ManagerInterface, umGlobal, (UDIS
 
 bool interfaceExists(const QString &path, const QString &interface)
 {
+    qDebug() << "Checking if interface exists:" << interface << "for path:" << path;
     QDBusInterface ud2(UDISKS2_SERVICE, path, "org.freedesktop.DBus.Introspectable", QDBusConnection::systemBus());
     QDBusReply<QString> reply = ud2.call("Introspect");
     QXmlStreamReader xml_parser(reply.value());
@@ -30,17 +32,21 @@ bool interfaceExists(const QString &path, const QString &interface)
             const QString &name = xml_parser.attributes().value("name").toString();
 
             if (name == interface) {
+                qDebug() << "Interface found:" << interface;
                 return true;
             }
         }
     }
 
+    qDebug() << "Interface not found:" << interface;
     return false;
 }
 
 OrgFreedesktopDBusObjectManagerInterface *objectManager()
 {
+    qDebug() << "Getting UDisks2 object manager";
     if (!omGlobal.exists()) {
+        qDebug() << "Registering DBus meta types";
         qDBusRegisterMetaType<QMap<QString, QVariantMap>>();
         qDBusRegisterMetaType<QList<QPair<QString, QVariantMap>>>();
         qDBusRegisterMetaType<QByteArrayList>();
@@ -53,11 +59,13 @@ OrgFreedesktopDBusObjectManagerInterface *objectManager()
 
 QString version()
 {
+    qDebug() << "Getting UDisks2 version";
     return umGlobal->version();
 }
 
 QStringList supportedFilesystems()
 {
+    qDebug() << "Getting UDisks2 supported filesystems";
     return umGlobal->supportedFilesystems();
 }
 
@@ -65,6 +73,7 @@ QStringList supportedFilesystems()
 
 QDBusArgument &operator<<(QDBusArgument &argument, const UDisks2::SmartAttribute &mystruct)
 {
+    qDebug() << "Serializing SmartAttribute to DBus argument";
     argument.beginStructure();
     argument << mystruct.id
              << mystruct.name
@@ -82,6 +91,7 @@ QDBusArgument &operator<<(QDBusArgument &argument, const UDisks2::SmartAttribute
 
 const QDBusArgument &operator>>(const QDBusArgument &argument, UDisks2::SmartAttribute &mystruct)
 {
+    qDebug() << "Deserializing SmartAttribute from DBus argument";
     argument.beginStructure();
     argument >> mystruct.id
             >> mystruct.name
@@ -99,6 +109,7 @@ const QDBusArgument &operator>>(const QDBusArgument &argument, UDisks2::SmartAtt
 
 QDBusArgument &operator<<(QDBusArgument &argument, const UDisks2::ActiveDeviceInfo &mystruct)
 {
+    qDebug() << "Serializing ActiveDeviceInfo to DBus argument";
     argument.beginStructure();
     argument << mystruct.block
              << mystruct.slot
@@ -112,6 +123,7 @@ QDBusArgument &operator<<(QDBusArgument &argument, const UDisks2::ActiveDeviceIn
 
 const QDBusArgument &operator>>(const QDBusArgument &argument, UDisks2::ActiveDeviceInfo &mystruct)
 {
+    qDebug() << "Deserializing ActiveDeviceInfo from DBus argument";
     argument.beginStructure();
     argument >> mystruct.block
             >> mystruct.slot
