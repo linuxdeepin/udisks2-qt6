@@ -1,3 +1,9 @@
+udisks2-qt6 (6.0.1) unstable; urgency=medium
+
+  * Update version to 6.0.1
+
+ -- zhanghongyuan <zhanghongyuan@uniontech.com>  Thu, 16 Oct 2024 19:40:00 +0800
+
 udisks2-qt6 (6.0.0) unstable; urgency=medium
 
   * Initial release for Qt6 version.
